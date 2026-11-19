@@ -59,8 +59,8 @@ local componentCache = {}
 local function loadComponent(name)
     assert(type(name) == "string" and name:match("^[%w_]+$"), "Invalid component name: " .. tostring(name))
 
-    local customPath = "/PawUI/Components/Custom/" .. name .. ".lua"
-    local builtinPath = "/PawUI/Components/Builtin/" .. name .. ".lua"
+    local customPath = "/PawUI/Components/Custom/" .. name
+    local builtinPath = "/PawUI/Components/Builtin/" .. name
     local path
 
     if fs.exists(customPath) then

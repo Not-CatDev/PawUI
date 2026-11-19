@@ -6,7 +6,8 @@ function Text.new(props)
     return Component.create("Text", {
         Text = "",
         TextColor = colors.white,
-        BackgroundVisible = false
+        BackgroundVisible = false,
+        TextXAlignment = "Left"
     }, props)
 end
 

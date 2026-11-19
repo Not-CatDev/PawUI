@@ -54,6 +54,21 @@ function PawUI.useEffect(callback, dependencies)
     return Hooks.useEffect(callback, dependencies)
 end
 
+function PawUI.SimpleText(name, x, y, text, textWidth, foreground, background)
+    return PawUI.Text({
+        Name = name,
+
+        Position = PawUI.UDim2.new(0, x - 1, 0, y - 1),
+        Size = PawUI.UDim2.new(0, textWidth, 0, 1),
+
+        Text = text,
+        TextColor = foreground or colors.white,
+
+        BackgroundVisible = background ~= nil,
+        BackgroundColor = background
+    })
+end
+
 local componentCache = {}
 
 local function loadComponent(name)

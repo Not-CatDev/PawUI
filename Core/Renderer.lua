@@ -89,23 +89,68 @@ end
 local function drawText(target, element, rect, clip, halfMode, inheritedBackground)
     local text = tostring(element.Text or "")
     local textColor = element.TextColor or colors.white
-    local backgroundColor = element.BackgroundVisible and (element.BackgroundColor or colors.black) or inheritedBackground
+    local backgroundColor = element.BackgroundVisible
+        and (element.BackgroundColor or colors.black)
+        or inheritedBackground
+
+    local alignment = element.TextXAlignment or "Left"
+
+    assert(
+        alignment == "Left"
+            or alignment == "Center"
+            or alignment == "Right",
+        "Invalid TextXAlignment: " .. tostring(alignment)
+    )
+
     local lineNumber = 0
 
     for line in (text .. "\n"):gmatch("(.-)\n") do
         local logicalY = rect.Y + lineNumber * (halfMode and 2 or 1)
-        local physicalY = halfMode and (math.floor((logicalY - 1) / 2) + 1) or logicalY
+        local physicalY = halfMode
+            and (math.floor((logicalY - 1) / 2) + 1)
+            or logicalY
 
         if physicalY >= (halfMode and (math.floor((clip.Y - 1) / 2) + 1) or clip.Y)
             and physicalY < (halfMode and (math.ceil((clip.Y + clip.Height - 1) / 2) + 1) or (clip.Y + clip.Height)) then
+
+            local alignedText = line
+
+            if #alignedText < rect.Width then
+                local remaining = rect.Width - #alignedText
+
+                if alignment == "Center" then
+                    local leftPadding = math.floor(remaining / 2)
+                    local rightPadding = remaining - leftPadding
+
+                    alignedText = string.rep(" ", leftPadding)
+                        .. alignedText
+                        .. string.rep(" ", rightPadding)
+
+                elseif alignment == "Right" then
+                    alignedText = string.rep(" ", remaining) .. alignedText
+
+                else
+                    alignedText = alignedText .. string.rep(" ", remaining)
+                end
+            end
+
             local startX = math.max(rect.X, clip.X)
             local endX = math.min(rect.X + rect.Width, clip.X + clip.Width)
+
             local leftTrim = math.max(0, startX - rect.X)
             local rightLimit = math.max(0, endX - rect.X)
-            local visibleText = line:sub(leftTrim + 1, rightLimit)
+
+            local visibleText = alignedText:sub(leftTrim + 1, rightLimit)
 
             if #visibleText > 0 then
-                Drawing.write(target, startX, physicalY, visibleText, textColor, backgroundColor)
+                Drawing.write(
+                    target,
+                    startX,
+                    physicalY,
+                    visibleText,
+                    textColor,
+                    backgroundColor
+                )
             end
         end
 

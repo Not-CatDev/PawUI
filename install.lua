@@ -1,5 +1,5 @@
 local CONFIG = {
-    Owner = "YOUR_GITHUB_USERNAME",
+    Owner = "Not-CatDev",
     Repository = "PawUI",
     Branch = "main",
     InstallPath = "/PawUI"

@@ -7,7 +7,9 @@ local PawUI = {}
 PawUI.UDim2 = require("/PawUI/Core/Udim2")
 PawUI.Vector2 = require("/PawUI/Core/Vector2")
 
-function PawUI.createRoot(target)
+function PawUI.createRoot(target, config)
+    config = config or {}
+
     if target then
         assert(type(target) == "string", "Target must be a peripheral name")
 
@@ -16,7 +18,12 @@ function PawUI.createRoot(target)
         end)
 
         assert(monitor, "Could not find monitor: " .. target)
+
         target = monitor
+
+        if config.TextScale then
+            target.setTextScale(config.TextScale)
+        end
     else
         target = term.current()
     end

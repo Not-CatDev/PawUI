@@ -59,19 +59,19 @@ local componentCache = {}
 local function loadComponent(name)
     assert(type(name) == "string" and name:match("^[%w_]+$"), "Invalid component name: " .. tostring(name))
 
-    local customPath = "/PawUI/Components/Custom/" .. name
-    local builtinPath = "/PawUI/Components/Builtin/" .. name
-    local path
+    local success, module = pcall(function()
+        return require("/PawUI/Components/Custom/" .. name)
+    end)
 
-    if fs.exists(customPath) then
-        path = customPath
-    elseif fs.exists(builtinPath) then
-        path = builtinPath
-    else
-        return nil
+    if not success then
+        success, module = pcall(function()
+            return require("/PawUI/Components/Builtin/" .. name)
+        end)
     end
 
-    local module = require(path)
+    if not success then
+        return nil
+    end
 
     if path == customPath and type(module) == "function" then
         return function(props)
@@ -105,6 +105,7 @@ end
 
 setmetatable(PawUI, {
     __index = function(_, name)
+
         local cached = componentCache[name]
         if cached then
             return cached

@@ -13,9 +13,7 @@ function PawUI.createRoot(target, config)
     if target then
         assert(type(target) == "string", "Target must be a peripheral name")
 
-        local monitor = peripheral.find("monitor", function(_, name)
-            return name == target
-        end)
+        local monitor = peripheral.wrap(target)
 
         assert(monitor, "Could not find monitor: " .. target)
 
